@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -12,10 +13,15 @@ import {
   Globe2,
   BookOpen,
   Utensils,
+  BrainCircuit,
+  Database,
+  GraduationCap as DegreeIcon,
+  Layers3,
+  Lightbulb,
+  Terminal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Ring } from "@/components/site/Ring";
-import heroGlass from "@/assets/hero-glass.png";
 import waves from "@/assets/waves.jpg";
 import { featuredProjects, profile, repos, repoUrl, skillGroups } from "@/data/profile";
 
@@ -56,101 +62,101 @@ function Index() {
 }
 
 function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activeCard, setActiveCard] = useState(0);
+  const aboutCards = [
+    {
+      title: "Computer Science graduate",
+      detail: "BSCS · Virtual University of Pakistan",
+      Icon: DegreeIcon,
+      tag: "01 / 05",
+    },
+    {
+      title: "Full-stack web apps",
+      detail: "Building practical applications from interface to data layer.",
+      Icon: Layers3,
+      tag: "02 / 05",
+    },
+    {
+      title: "Python programs",
+      detail: "Useful tools shaped around clear logic and everyday tasks.",
+      Icon: Terminal,
+      tag: "03 / 05",
+    },
+    {
+      title: "Thoughtful databases",
+      detail: "Structured data designed to support real workflows.",
+      Icon: Database,
+      tag: "04 / 05",
+    },
+    {
+      title: "Simpler everyday experiences",
+      detail: "Technology is at its best when it solves real problems.",
+      Icon: Lightbulb,
+      tag: "05 / 05",
+    },
+  ];
+
+  useEffect(() => {
+    const updateCard = () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const distance = Math.max(0, -section.getBoundingClientRect().top);
+      const step = Math.max(1, window.innerHeight * 0.72);
+      setActiveCard(Math.min(aboutCards.length - 1, Math.floor(distance / step)));
+    };
+    updateCard();
+    window.addEventListener("scroll", updateCard, { passive: true });
+    window.addEventListener("resize", updateCard);
+    return () => {
+      window.removeEventListener("scroll", updateCard);
+      window.removeEventListener("resize", updateCard);
+    };
+  }, [aboutCards.length]);
+
+  const active = aboutCards[activeCard] ?? aboutCards[0];
+  const ActiveIcon = active.Icon;
+
   return (
-    <section className="px-3 sm:px-5">
-      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-primary p-2 sm:p-3">
+    <section id="home" ref={sectionRef} className="relative min-h-[370svh] px-3 sm:px-5">
+      <div className="sticky top-[4.75rem] mx-auto grid h-[calc(100svh-5.5rem)] min-h-[32rem] max-w-7xl overflow-hidden rounded-[2rem] bg-primary p-2 sm:p-3">
         <div className="absolute inset-0 grid-dots" aria-hidden />
-        <div className="relative grid overflow-hidden rounded-[1.6rem] bg-background lg:grid-cols-[1.05fr_1fr]">
-          {/* Copy */}
-          <div className="relative z-10 flex flex-col justify-center px-6 pb-10 pt-12 sm:px-12 lg:py-20">
+        <div className="relative grid overflow-hidden rounded-[1.6rem] bg-background px-6 py-8 sm:px-12 sm:py-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="relative z-10 flex flex-col justify-center">
             <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold">
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60" />
-                <span className="relative inline-flex size-2 rounded-full bg-primary" />
-              </span>
-              {profile.degree} · {profile.location}
+              <span className="size-2 rounded-full bg-primary" /> About me
             </span>
-            <h1 className="mt-6 font-display-tight text-[clamp(3.4rem,8vw,6.8rem)] animate-rise">
-              Software that
-              <br />
-              solves{" "}
-              <span className="relative inline-block">
-                <span className="absolute inset-x-[-0.08em] bottom-[0.08em] top-[0.32em] -z-10 -rotate-1 rounded-md bg-accent" />
-                real
-              </span>
-              <br />
-              problems.
+            <h1 className="mt-6 font-display-tight text-6xl animate-rise sm:text-7xl lg:text-8xl">
+              Maida Javed
             </h1>
-            <p className="mt-6 max-w-md text-base text-muted-foreground sm:text-lg">
-              I'm <strong className="text-foreground">Maida Javed</strong> — a Computer Science graduate
-              building full-stack web apps, Python programs and thoughtful databases that make everyday
-              experiences simpler.
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              I'm a Computer Science graduate building full-stack web apps, Python programs and thoughtful databases that make everyday experiences simpler.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild variant="hero" size="xl">
-                <Link to="/projects">
-                  View projects <ArrowRight />
-                </Link>
+                <Link to="/projects">View projects <ArrowRight /></Link>
               </Button>
               <Button asChild variant="pill" size="xl">
-                <a href={profile.github} target="_blank" rel="noreferrer">
-                  <Github /> GitHub
-                </a>
+                <a href={profile.github} target="_blank" rel="noreferrer"><Github /> GitHub</a>
               </Button>
             </div>
           </div>
 
-          {/* Visual + floating cards */}
-          <div className="relative min-h-[460px] lg:min-h-[620px]">
-            <div className="absolute inset-6 rounded-[1.4rem] bg-lilac/60 lg:inset-y-10 lg:left-0 lg:right-10" aria-hidden />
-            <img
-              src={heroGlass}
-              alt="Glass laptop with code symbol surrounded by database, security shield and network icons"
-              width={1024}
-              height={1024}
-              className="absolute left-1/2 top-1/2 w-[82%] max-w-[560px] -translate-x-1/2 -translate-y-1/2 animate-float drop-shadow-2xl"
-            />
-
-            <div className="absolute right-4 top-8 w-52 rounded-2xl border border-border bg-card p-3 shadow-float sm:right-8 lg:top-14 animate-float-slow">
-              <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-full bg-primary font-display text-sm font-extrabold text-primary-foreground">
-                  MJ
-                </span>
-                <div>
-                  <p className="text-sm font-bold">Maida Javed</p>
-                  <p className="text-xs font-semibold text-primary">Open to developer roles</p>
-                </div>
+          <div className="relative flex min-h-56 items-center justify-center lg:min-h-full">
+            <div className="absolute inset-2 rounded-[1.4rem] bg-lilac/60 sm:inset-8" aria-hidden="true" />
+            <article key={activeCard} aria-live="polite" className="relative w-full max-w-md animate-rise rounded-3xl border border-border bg-card p-6 shadow-float sm:p-9">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase text-muted-foreground">About · {active.tag}</span>
+                <span className="grid size-12 place-items-center rounded-2xl bg-accent text-accent-foreground"><ActiveIcon className="size-6" /></span>
               </div>
-            </div>
-
-            <div className="absolute bottom-24 right-4 hidden w-48 rounded-2xl border border-border bg-card p-4 text-center shadow-float sm:right-8 sm:block lg:bottom-36">
-              <p className="text-sm font-bold">BSCS CGPA</p>
-              <p className="text-xs text-muted-foreground">Virtual University of Pakistan</p>
-              <div className="mt-3 flex justify-center">
-                <Ring value={3.01} max={4} label="3.01" />
+              <h2 className="mt-8 font-display-tight text-4xl sm:text-5xl">{active.title}</h2>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{active.detail}</p>
+              <div className="mt-8 flex gap-2" aria-label={`Card ${activeCard + 1} of ${aboutCards.length}`}>
+                {aboutCards.map((card, index) => (
+                  <span key={card.tag} className={`h-1.5 flex-1 rounded-full ${index === activeCard ? "bg-primary" : "bg-border"}`} />
+                ))}
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">out of 4.00</p>
-            </div>
-
-            <div className="absolute bottom-6 right-4 flex w-56 items-center gap-3 rounded-2xl bg-lilac p-3 text-lilac-foreground shadow-float sm:right-8 lg:bottom-14">
-              <span className="grid size-9 place-items-center rounded-xl bg-ink text-ink-foreground">
-                <Sparkles className="size-4" />
-              </span>
-              <div>
-                <p className="text-xs font-bold">Currently exploring</p>
-                <p className="text-xs opacity-80">AI · IoT · Cybersecurity</p>
-              </div>
-            </div>
-
-            <div className="absolute bottom-6 left-4 flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-float sm:left-10 lg:bottom-14">
-              <span className="grid size-9 place-items-center rounded-xl bg-accent text-accent-foreground">
-                <Award className="size-4" />
-              </span>
-              <div>
-                <p className="font-display text-xl font-extrabold leading-none">{profile.stats.certifications}</p>
-                <p className="text-xs text-muted-foreground">Certifications</p>
-              </div>
-            </div>
+            </article>
           </div>
         </div>
       </div>
@@ -186,7 +192,7 @@ function Pill({ children }: { children: React.ReactNode }) {
 
 function Manifesto() {
   return (
-    <section className="mt-16 px-3 sm:px-5">
+    <section id="about" className="mt-16 px-3 sm:px-5">
       <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-ink px-6 py-20 text-ink-foreground sm:px-12 sm:py-28">
         <img
           src={waves}
@@ -248,7 +254,7 @@ function Workspace() {
   const bars = skillGroups.map((g, i) => ({ label: short[i], value: g.items.length }));
   const maxBar = Math.max(...bars.map((b) => b.value));
   return (
-    <section className="mt-16 px-3 sm:px-5">
+    <section id="workspace" className="mt-16 px-3 sm:px-5">
       <div className="mx-auto max-w-7xl rounded-[2rem] bg-secondary p-4 sm:p-6">
         <div className="flex flex-col justify-between gap-6 px-2 pt-4 sm:flex-row sm:items-end">
           <div>
@@ -368,7 +374,7 @@ function Workspace() {
 function Featured() {
   const icons = [Utensils, BookOpen];
   return (
-    <section className="mt-16 px-3 sm:px-5">
+    <section id="projects" className="mt-16 px-3 sm:px-5">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col justify-between gap-4 px-2 sm:flex-row sm:items-end">
           <h2 className="font-display-tight text-5xl sm:text-7xl">
@@ -423,7 +429,7 @@ function Featured() {
 
 function CtaBand() {
   return (
-    <section className="my-16 px-3 sm:px-5">
+    <section id="contact" className="my-16 px-3 sm:px-5">
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 rounded-[2rem] border border-border bg-card p-8 sm:flex-row sm:items-center sm:p-12">
         <h2 className="max-w-2xl font-display-tight text-4xl sm:text-6xl">
           Looking for a curious developer for your team?

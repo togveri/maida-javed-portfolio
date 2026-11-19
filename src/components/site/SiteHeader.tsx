@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X, ArrowUpRight } from "lucide-react";
-import { useState } from "react";
+import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
 const nav = [
@@ -13,62 +14,84 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const [section, setSection] = useState("Home");
+
+  useEffect(() => {
+    setOpen(false);
+    const routeLabel = nav.find((item) => item.to === pathname)?.label ?? "Home";
+    setSection(routeLabel);
+
+    if (pathname !== "/") return;
+
+    const sectionLabels: Record<string, string> = {
+      home: "Home",
+      about: "About",
+      workspace: "Workspace",
+      projects: "Projects",
+      contact: "Contact",
+    };
+    const targets = Object.keys(sectionLabels)
+      .map((id) => document.getElementById(id))
+      .filter((element): element is HTMLElement => element !== null);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setSection(sectionLabels[visible.target.id] ?? "Home");
+      },
+      { rootMargin: "-35% 0px -55% 0px", threshold: 0 },
+    );
+    targets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, [pathname]);
+
   return (
-    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 rounded-full border border-border/70 bg-background/80 py-2 pl-3 pr-2 backdrop-blur-xl">
-        <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="grid size-9 place-items-center rounded-full bg-primary font-display text-sm font-extrabold text-primary-foreground">
-            MJ
-          </span>
-          <span className="font-display text-lg font-bold tracking-tight">Maida Javed</span>
-        </Link>
-
-        <nav className="hidden items-center gap-1 rounded-full bg-ink p-1 md:flex">
-          {nav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              activeOptions={{ exact: n.to === "/" }}
-              className="rounded-full px-4 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink-foreground"
-              activeProps={{ className: "bg-lilac !text-lilac-foreground" }}
+    <header className="fixed inset-x-0 top-3 z-50 px-3 sm:px-5">
+      <div className="mx-auto flex max-w-7xl items-center justify-end gap-2">
+        <div className="relative">
+          <div className="flex h-12 items-center gap-3 rounded-full border border-border/70 bg-background/65 px-4 shadow-float backdrop-blur-xl">
+            <span className="min-w-20 text-sm font-semibold" aria-live="polite">{section}</span>
+            <span className="h-5 w-px bg-border" aria-hidden="true" />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={open}
+              aria-controls="site-navigation"
+              onClick={() => setOpen((isOpen) => !isOpen)}
+              className="rounded-full"
             >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
+              {open ? <X /> : <Menu />}
+            </Button>
+            <ChevronDown className={`size-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+          </div>
 
-        <div className="flex items-center gap-2">
-          <Button asChild variant="lime" size="default" className="hidden sm:inline-flex">
-            <Link to="/contact">
-              Let's talk <ArrowUpRight />
-            </Link>
-          </Button>
-          <button
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((o) => !o)}
-            className="grid size-10 place-items-center rounded-full bg-ink text-ink-foreground md:hidden"
-          >
-            {open ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+          {open && (
+            <nav id="site-navigation" aria-label="Main navigation" className="absolute right-0 top-14 flex w-52 flex-col gap-1 rounded-2xl border border-border/70 bg-background/95 p-2 shadow-float backdrop-blur-xl">
+              {nav.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  activeOptions={{ exact: item.to === "/" }}
+                  className="rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  activeProps={{ className: "bg-secondary !text-foreground" }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          )}
         </div>
+        <Button asChild variant="lime" size="default" className="h-12 px-5">
+          <Link to="/contact">
+            Let's talk <ArrowUpRight />
+          </Link>
+        </Button>
       </div>
-
-      {open && (
-        <nav className="mx-auto mt-2 flex max-w-7xl flex-col gap-1 rounded-3xl bg-ink p-3 md:hidden">
-          {nav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              onClick={() => setOpen(false)}
-              activeOptions={{ exact: n.to === "/" }}
-              className="rounded-2xl px-4 py-3 font-medium text-ink-muted"
-              activeProps={{ className: "bg-lilac !text-lilac-foreground" }}
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-      )}
     </header>
   );
 }
