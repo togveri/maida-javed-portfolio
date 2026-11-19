@@ -114,7 +114,8 @@ function Hero() {
     };
   }, [aboutCards.length]);
 
-  const active = aboutCards[activeCard] ?? aboutCards[0];
+  const active = aboutCards[activeCard];
+  if (!active) return null;
   const ActiveIcon = active.Icon;
 
   return (
