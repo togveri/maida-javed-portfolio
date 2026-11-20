@@ -205,7 +205,7 @@ function Manifesto() {
           className="absolute inset-0 size-full object-cover opacity-80"
         />
         <div className="relative">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-ink-muted">About me</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-ink-muted">Strengths</p>
           <h2 className="mt-8 font-display text-[clamp(2.4rem,6.5vw,5.6rem)] font-semibold leading-[1.08] tracking-tight">
             Curious
             <Pill>

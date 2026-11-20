@@ -26,7 +26,7 @@ export function SiteHeader() {
 
     const sectionLabels: Record<string, string> = {
       home: "Home",
-      about: "About",
+      about: "Strengths",
       workspace: "Workspace",
       projects: "Projects",
       contact: "Contact",
@@ -49,9 +49,9 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-3 z-50 px-3 sm:px-5">
-      <div className="mx-auto flex max-w-7xl items-center justify-end gap-2">
+      <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2">
         <div className="relative">
-          <div className="flex h-12 items-center gap-3 rounded-full border border-border/70 bg-background/65 px-4 shadow-float backdrop-blur-xl">
+          <div className="flex h-12 items-center gap-3 rounded-full border border-border/55 bg-background/40 px-4 shadow-float backdrop-blur-xl">
             <span className="min-w-20 text-sm font-semibold" aria-live="polite">{section}</span>
             <span className="h-5 w-px bg-border" aria-hidden="true" />
             <Button
@@ -86,7 +86,7 @@ export function SiteHeader() {
             </nav>
           )}
         </div>
-        <Button asChild variant="lime" size="default" className="h-12 px-5">
+        <Button asChild variant="lime" size="default" className="absolute right-0 top-0 h-12 px-5">
           <Link to="/contact">
             Let's talk <ArrowUpRight />
           </Link>
