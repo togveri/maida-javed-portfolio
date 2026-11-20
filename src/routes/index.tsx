@@ -1,16 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { StrengthsHeadline } from "@/components/site/StrengthsHeadline";
+
+const WorkspaceOrbit = lazy(() => import("@/components/site/WorkspaceOrbit"));
 import {
   ArrowRight,
   ArrowUpRight,
   Award,
   BadgeCheck,
-  Code2,
   Github,
   GraduationCap,
   HeartHandshake,
-  Sparkles,
-  Globe2,
   BookOpen,
   Utensils,
   BrainCircuit,
@@ -183,14 +183,6 @@ function Marquee() {
   );
 }
 
-function Pill({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="mx-2 inline-grid h-[0.78em] w-[1.5em] place-items-center rounded-full border border-ink-foreground/40 align-middle text-primary-glow">
-      {children}
-    </span>
-  );
-}
-
 function Manifesto() {
   return (
     <section id="about" className="mt-16 px-3 sm:px-5">
@@ -206,39 +198,20 @@ function Manifesto() {
         />
         <div className="relative">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-ink-muted">Strengths</p>
-          <h2 className="mt-8 font-display text-[clamp(2.4rem,6.5vw,5.6rem)] font-semibold leading-[1.08] tracking-tight">
-            Curious
-            <Pill>
-              <Sparkles className="size-[0.42em]" />
-            </Pill>
-            mind,
-            <br />
-            <span className="pl-[8%]">clean</span>
-            <Pill>
-              <Code2 className="size-[0.42em]" />
-            </Pill>
-            code,{" "}
-            <span className="font-serif font-normal italic text-ink-muted">thoughtful</span>
-            <br />
-            real
-            <Pill>
-              <Globe2 className="size-[0.42em]" />
-            </Pill>
-            impact.
-          </h2>
+          <StrengthsHeadline />
 
           <div className="mt-14 grid gap-4 md:grid-cols-3">
-            <div className="glass rounded-3xl p-6">
-              <GraduationCap className="size-6 text-accent" />
+            <div className="strength-card glass group rounded-3xl p-6">
+              <GraduationCap className="strength-icon size-6 text-accent" />
               <p className="mt-4 text-sm leading-relaxed text-ink-muted">{profile.intro}</p>
             </div>
-            <div className="glass rounded-3xl p-6">
-              <HeartHandshake className="size-6 text-accent" />
+            <div className="strength-card glass group rounded-3xl p-6">
+              <HeartHandshake className="strength-icon size-6 text-accent" />
               <p className="mt-2 font-semibold">What I bring to a team</p>
               <p className="mt-2 text-sm leading-relaxed text-ink-muted">{profile.bring}</p>
             </div>
-            <div className="glass rounded-3xl p-6">
-              <BadgeCheck className="size-6 text-accent" />
+            <div className="strength-card glass group rounded-3xl p-6">
+              <BadgeCheck className="strength-icon size-6 text-accent" />
               <p className="mt-2 font-semibold">My career goal</p>
               <p className="mt-2 text-sm leading-relaxed text-ink-muted">{profile.goal}</p>
             </div>
@@ -254,6 +227,7 @@ function Workspace() {
   const short = ["Backend", "Frontend", "Data", "Network", "Tools"];
   const bars = skillGroups.map((g, i) => ({ label: short[i], value: g.items.length }));
   const maxBar = Math.max(...bars.map((b) => b.value));
+  const orbitRepos = useMemo(() => repos.map((r) => ({ title: r.title, language: r.language, url: repoUrl(r.name) })), []);
   return (
     <section id="workspace" className="mt-16 px-3 sm:px-5">
       <div className="mx-auto max-w-7xl rounded-[2rem] bg-secondary p-4 sm:p-6">
@@ -282,7 +256,15 @@ function Workspace() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_1fr]">
+        <div className="mt-6">
+          <ClientOnly fallback={<div className="h-[420px] rounded-3xl bg-ink sm:h-[520px]" />}>
+            <Suspense fallback={<div className="h-[420px] rounded-3xl bg-ink sm:h-[520px]" />}>
+              <WorkspaceOrbit repos={orbitRepos} />
+            </Suspense>
+          </ClientOnly>
+        </div>
+
+        <div className="mt-4 grid gap-4 lg:grid-cols-[1.3fr_1fr]">
           {/* recent repos table */}
           <div className="rounded-3xl bg-card p-5 sm:p-6">
             <div className="flex items-center justify-between">

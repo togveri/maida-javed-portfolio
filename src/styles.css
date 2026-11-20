@@ -197,3 +197,39 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Strengths cards: lift, tilt-free glow sweep and icon pop */
+.strength-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.5s cubic-bezier(.2,.8,.2,1), box-shadow 0.5s, border-color 0.5s;
+}
+.strength-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px circle at 0% 0%, color-mix(in oklch, var(--accent) 22%, transparent), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+.strength-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, oklch(1 0 0 / 10%) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.9s cubic-bezier(.2,.8,.2,1);
+  pointer-events: none;
+}
+.strength-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-glass), 0 0 0 1px color-mix(in oklch, var(--accent) 45%, transparent);
+}
+.strength-card:hover::before { opacity: 1; }
+.strength-card:hover::after { transform: translateX(120%); }
+.strength-icon { transition: transform 0.6s cubic-bezier(.34,1.56,.64,1); }
+.strength-card:hover .strength-icon { transform: scale(1.25) rotate(-10deg); }
+@media (prefers-reduced-motion: reduce) {
+  .strength-card, .strength-card::after, .strength-icon { transition: none; }
+}
