@@ -1,8 +1,7 @@
-import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { StrengthsHeadline } from "@/components/site/StrengthsHeadline";
 
-const WorkspaceOrbit = lazy(() => import("@/components/site/WorkspaceOrbit"));
 import {
   ArrowRight,
   ArrowUpRight,
@@ -12,7 +11,6 @@ import {
   GraduationCap,
   HeartHandshake,
   BookOpen,
-  Utensils,
   BrainCircuit,
   Database,
   GraduationCap as DegreeIcon,
@@ -63,6 +61,7 @@ function Index() {
 
 function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const [activeCard, setActiveCard] = useState(0);
   const aboutCards = [
     {
@@ -100,10 +99,12 @@ function Hero() {
   useEffect(() => {
     const updateCard = () => {
       const section = sectionRef.current;
-      if (!section) return;
-      const distance = Math.max(0, -section.getBoundingClientRect().top);
-      const step = Math.max(1, window.innerHeight * 0.72);
-      setActiveCard(Math.min(aboutCards.length - 1, Math.floor(distance / step)));
+      const sticky = stickyRef.current;
+      if (!section || !sticky) return;
+      const travel = Math.max(0, section.offsetHeight - sticky.offsetHeight);
+      const progress = Math.min(travel, Math.max(0, -section.getBoundingClientRect().top));
+      const step = travel / aboutCards.length;
+      setActiveCard(step > 0 ? Math.min(aboutCards.length - 1, Math.floor(progress / step)) : 0);
     };
     updateCard();
     window.addEventListener("scroll", updateCard, { passive: true });
@@ -120,7 +121,7 @@ function Hero() {
 
   return (
     <section id="home" ref={sectionRef} className="relative min-h-[370svh] px-3 sm:px-5">
-      <div className="sticky top-[4.75rem] mx-auto grid h-[calc(100svh-5.5rem)] min-h-[32rem] max-w-7xl overflow-hidden rounded-[2rem] bg-primary p-2 sm:p-3">
+      <div ref={stickyRef} className="sticky top-[4.75rem] mx-auto grid h-[calc(100svh-5.5rem)] min-h-[32rem] max-w-7xl overflow-hidden rounded-[2rem] bg-primary p-2 sm:p-3">
         <div className="absolute inset-0 grid-dots" aria-hidden />
         <div className="relative grid overflow-hidden rounded-[1.6rem] bg-background px-6 py-8 sm:px-12 sm:py-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div className="relative z-10 flex flex-col justify-center">
@@ -227,7 +228,6 @@ function Workspace() {
   const short = ["Backend", "Frontend", "Data", "Network", "Tools"];
   const bars = skillGroups.map((g, i) => ({ label: short[i], value: g.items.length }));
   const maxBar = Math.max(...bars.map((b) => b.value));
-  const orbitRepos = useMemo(() => repos.map((r) => ({ title: r.title, language: r.language, url: repoUrl(r.name) })), []);
   return (
     <section id="workspace" className="mt-16 px-3 sm:px-5">
       <div className="mx-auto max-w-7xl rounded-[2rem] bg-secondary p-4 sm:p-6">
@@ -256,15 +256,7 @@ function Workspace() {
           </div>
         </div>
 
-        <div className="mt-6">
-          <ClientOnly fallback={<div className="h-[420px] rounded-3xl bg-ink sm:h-[520px]" />}>
-            <Suspense fallback={<div className="h-[420px] rounded-3xl bg-ink sm:h-[520px]" />}>
-              <WorkspaceOrbit repos={orbitRepos} />
-            </Suspense>
-          </ClientOnly>
-        </div>
-
-        <div className="mt-4 grid gap-4 lg:grid-cols-[1.3fr_1fr]">
+        <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_1fr]">
           {/* recent repos table */}
           <div className="rounded-3xl bg-card p-5 sm:p-6">
             <div className="flex items-center justify-between">
@@ -355,7 +347,6 @@ function Workspace() {
 }
 
 function Featured() {
-  const icons = [Utensils, BookOpen];
   return (
     <section id="projects" className="mt-16 px-3 sm:px-5">
       <div className="mx-auto max-w-7xl">
@@ -370,7 +361,6 @@ function Featured() {
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {featuredProjects.map((p, i) => {
-            const Icon = icons[i] ?? Utensils;
             const lime = i === 0;
             return (
               <article
@@ -378,8 +368,21 @@ function Featured() {
                 className={`group relative overflow-hidden rounded-[2rem] p-7 sm:p-10 ${lime ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground"}`}
               >
                 <div className="flex items-start justify-between">
-                  <span className={`grid size-14 place-items-center rounded-2xl ${lime ? "bg-ink text-ink-foreground" : "bg-primary-foreground/15"}`}>
-                    <Icon className="size-6" />
+                  <span className={`featured-project-icon grid size-14 place-items-center rounded-2xl ${lime ? "bg-ink text-ink-foreground" : "bg-primary-foreground/15"}`} aria-hidden="true">
+                    {lime ? (
+                      <span className="food-setting">
+                        <span className="food-plate"><span className="food-plate-center" /></span>
+                        <span className="food-utensil food-fork" />
+                        <span className="food-utensil food-knife" />
+                      </span>
+                    ) : (
+                      <span className="book-icon">
+                        <BookOpen className="size-6" />
+                        <span className="book-page-turn book-page-one" />
+                        <span className="book-page-turn book-page-two" />
+                        <span className="book-page-turn book-page-three" />
+                      </span>
+                    )}
                   </span>
                   <span className={`rounded-full px-3 py-1 text-xs font-semibold ${lime ? "bg-ink/10" : "bg-primary-foreground/15"}`}>
                     {p.kind}

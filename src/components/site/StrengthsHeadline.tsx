@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Code2, Globe2, Sparkles } from "lucide-react";
 
-/** Words start joined; on view they part and each symbol grows into the gap, one after another. */
+/** Words start joined; on each entry the words part and their symbols appear in sequence. */
 function Symbol({ children, delay, on }: { children: ReactNode; delay: number; on: boolean }) {
   return (
     <span
@@ -31,13 +31,8 @@ export function StrengthsHeadline() {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
-      ([e]) => {
-        if (e?.isIntersecting) {
-          setOn(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.5 },
+      ([entry]) => setOn(Boolean(entry?.isIntersecting)),
+      { threshold: 0.25 },
     );
     io.observe(el);
     return () => io.disconnect();

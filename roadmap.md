@@ -1,0 +1,5 @@
+- [ ] Make the Strengths headline replay when the section enters view.
+- [ ] Divide the About cards' scroll travel evenly across all five cards.
+- [ ] Remove the repository orbit scene from the workspace section.
+- [ ] Add plate-setting and page-turn animations to the featured project icons.
+- [ ] Verify the preview, responsive layout, diagnostics, and tests; commit the changes.
