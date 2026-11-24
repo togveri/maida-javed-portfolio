@@ -1,27 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { StrengthsHeadline } from "@/components/site/StrengthsHeadline";
+import { HeroScene } from "@/components/site/HeroScene";
+import { DeveloperWorkspace } from "@/components/site/DeveloperWorkspace";
 
 import {
   ArrowRight,
   ArrowUpRight,
   Award,
   BadgeCheck,
-  Github,
   GraduationCap,
   HeartHandshake,
-  BookOpen,
   BrainCircuit,
   Database,
+  GitBranch,
   GraduationCap as DegreeIcon,
   Layers3,
-  Lightbulb,
   Terminal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Ring } from "@/components/site/Ring";
 import waves from "@/assets/waves.jpg";
-import { featuredProjects, profile, repos, repoUrl, skillGroups } from "@/data/profile";
+import { featuredProjects, profile, skillGroups } from "@/data/profile";
+import { FoodWasteCartIcon, BookRiffleIcon } from "@/components/site/ProjectCardIcons";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -52,7 +53,7 @@ function Index() {
       <Hero />
       <Marquee />
       <Manifesto />
-      <Workspace />
+      <DeveloperWorkspace />
       <Featured />
       <CtaBand />
     </>
@@ -60,105 +61,323 @@ function Index() {
 }
 
 function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const [activeCard, setActiveCard] = useState(0);
-  const aboutCards = [
+  const containerRef = useRef<HTMLElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Smooth scroll listener that calculates 0 to 1 progress across the hero container
+  useEffect(() => {
+    let rafId: number;
+    let targetProgress = 0;
+    let currentProgress = 0;
+
+    const handleScroll = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const totalScroll = el.offsetHeight - window.innerHeight;
+      if (totalScroll <= 0) return;
+      const currentScroll = Math.max(0, -rect.top);
+      targetProgress = Math.min(1, Math.max(0, currentScroll / totalScroll));
+    };
+
+    const updateLoop = () => {
+      // Lerp smoothing (like Lenis momentum)
+      currentProgress += (targetProgress - currentProgress) * 0.09;
+      setScrollProgress(currentProgress);
+      rafId = requestAnimationFrame(updateLoop);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    handleScroll();
+    rafId = requestAnimationFrame(updateLoop);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Rogue Studio style scattered cards with custom parallax vectors (palX, palY)
+  const cards = [
     {
-      title: "Computer Science graduate",
-      detail: "BSCS · Virtual University of Pakistan",
+      id: "edu",
+      tag: "01 / EDUCATION",
+      title: "Computer Science Graduate",
+      detail: "BSCS · Virtual University of Pakistan · CGPA 3.01",
+      extra: "Algorithms · AI · Data Warehousing · Cloud",
       Icon: DegreeIcon,
-      tag: "01 / 05",
+      accent: "text-accent border-accent/30 bg-accent/10",
+      iconBg: "bg-accent/15 text-accent",
+      pos: "top-[12%] left-[4%] lg:left-[8%]",
+      palX: -1.6,
+      palY: -2.4,
+      rotate: -3,
     },
     {
-      title: "Full-stack web apps",
-      detail: "Building practical applications from interface to data layer.",
+      id: "web",
+      tag: "02 / FULL-STACK",
+      title: "Full-Stack Web Apps",
+      detail: "Building practical web apps from UI to relational data layer.",
+      extra: "PHP · MySQL · JavaScript · REST APIs",
       Icon: Layers3,
-      tag: "02 / 05",
+      accent: "text-primary-glow border-primary/30 bg-primary/10",
+      iconBg: "bg-primary/20 text-primary-glow",
+      pos: "top-[14%] right-[4%] lg:right-[7%]",
+      palX: 1.8,
+      palY: -2.0,
+      rotate: 2.5,
     },
     {
-      title: "Python programs",
-      detail: "Useful tools shaped around clear logic and everyday tasks.",
+      id: "py",
+      tag: "03 / LOGIC",
+      title: "Python Programs",
+      detail: "Useful console tools, CSV pipelines and clean automation logic.",
+      extra: "OOP · Error handling · Algorithms · Testing",
       Icon: Terminal,
-      tag: "03 / 05",
+      accent: "text-amber-400 border-amber-400/30 bg-amber-400/10",
+      iconBg: "bg-amber-400/15 text-amber-300",
+      pos: "bottom-[20%] left-[3%] lg:left-[6%]",
+      palX: -2.0,
+      palY: 2.2,
+      rotate: 2,
     },
     {
-      title: "Thoughtful databases",
-      detail: "Structured data designed to support real workflows.",
+      id: "db",
+      tag: "04 / ARCHITECTURE",
+      title: "Thoughtful Databases",
+      detail: "Structured relational models designed for data integrity.",
+      extra: "SQL · PostgreSQL · Schema Normalization",
       Icon: Database,
-      tag: "04 / 05",
+      accent: "text-cyan-400 border-cyan-400/30 bg-cyan-400/10",
+      iconBg: "bg-cyan-400/15 text-cyan-300",
+      pos: "bottom-[18%] right-[4%] lg:right-[8%]",
+      palX: 2.2,
+      palY: 1.8,
+      rotate: -2.5,
     },
     {
-      title: "Simpler everyday experiences",
-      detail: "Technology is at its best when it solves real problems.",
-      Icon: Lightbulb,
-      tag: "05 / 05",
+      id: "integration",
+      tag: "05 / INTEGRATION",
+      title: "APIs, Linux & Git",
+      detail: "Connecting backend logic, databases, and APIs into version-controlled systems.",
+      extra: "Git · Linux CLI · REST APIs · Postman & XAMPP",
+      Icon: GitBranch,
+      accent: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10",
+      iconBg: "bg-emerald-400/15 text-emerald-300",
+      pos: "bottom-[8%] left-[28%] lg:left-[36%] hidden md:block",
+      palX: 0.4,
+      palY: 2.8,
+      rotate: -1,
     },
   ];
 
-  useEffect(() => {
-    const updateCard = () => {
-      const section = sectionRef.current;
-      const sticky = stickyRef.current;
-      if (!section || !sticky) return;
-      const travel = Math.max(0, section.offsetHeight - sticky.offsetHeight);
-      const progress = Math.min(travel, Math.max(0, -section.getBoundingClientRect().top));
-      const step = travel / aboutCards.length;
-      setActiveCard(step > 0 ? Math.min(aboutCards.length - 1, Math.floor(progress / step)) : 0);
-    };
-    updateCard();
-    window.addEventListener("scroll", updateCard, { passive: true });
-    window.addEventListener("resize", updateCard);
-    return () => {
-      window.removeEventListener("scroll", updateCard);
-      window.removeEventListener("resize", updateCard);
-    };
-  }, [aboutCards.length]);
-
-  const active = aboutCards[activeCard];
-  if (!active) return null;
-  const ActiveIcon = active.Icon;
+  // Floating tiny code brackets and syntax blocks moving with the scroll
+  const codeSnippets = [
+    {
+      code: "if (problem.isComplex) { solveWithCuriosity(); }",
+      pos: "top-[26%] left-[22%]",
+      palX: 1.2,
+      palY: -2.8,
+      color: "text-accent",
+    },
+    {
+      code: "{ const [curiosity, setCuriosity] = useState(true); }",
+      pos: "top-[22%] right-[24%]",
+      palX: -1.4,
+      palY: -2.2,
+      color: "text-primary-glow",
+    },
+    {
+      code: "<Database.Normalize 3NF />",
+      pos: "top-[48%] left-[6%]",
+      palX: -2.4,
+      palY: 0.8,
+      color: "text-cyan-400",
+    },
+    {
+      code: "def optimize_pipeline(data): return clean(data)",
+      pos: "top-[46%] right-[8%]",
+      palX: 2.2,
+      palY: -0.6,
+      color: "text-amber-400",
+    },
+    {
+      code: "git commit -m 'feat: complete full-stack workflow'",
+      pos: "bottom-[34%] left-[24%]",
+      palX: -1.8,
+      palY: 2.4,
+      color: "text-emerald-400",
+    },
+    {
+      code: "npm run build:future",
+      pos: "bottom-[32%] right-[22%]",
+      palX: 1.5,
+      palY: 2.6,
+      color: "text-violet-400",
+    },
+    {
+      code: "[01001101 01100001 01101001 01100100 01100001]",
+      pos: "top-[8%] left-[40%]",
+      palX: 0.2,
+      palY: -3.2,
+      color: "text-zinc-500",
+    },
+    {
+      code: "try { integrate(); } catch (err) { debug(err); }",
+      pos: "bottom-[12%] right-[10%]",
+      palX: 2.0,
+      palY: 3.4,
+      color: "text-zinc-400",
+    },
+    {
+      code: "{ ...systemIntegration }",
+      pos: "bottom-[14%] left-[12%]",
+      palX: -1.5,
+      palY: 3.0,
+      color: "text-accent",
+    },
+  ];
 
   return (
-    <section id="home" ref={sectionRef} className="relative min-h-[370svh] px-3 sm:px-5">
-      <div ref={stickyRef} className="sticky top-[4.75rem] mx-auto grid h-[calc(100svh-5.5rem)] min-h-[32rem] max-w-7xl overflow-hidden rounded-[2rem] bg-primary p-2 sm:p-3">
-        <div className="absolute inset-0 grid-dots" aria-hidden />
-        <div className="relative grid overflow-hidden rounded-[1.6rem] bg-background px-6 py-8 sm:px-12 sm:py-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          <div className="relative z-10 flex flex-col justify-center">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold">
-              <span className="size-2 rounded-full bg-primary" /> About me
-            </span>
-            <h1 className="mt-6 font-display-tight text-6xl animate-rise sm:text-7xl lg:text-8xl">
-              Maida Javed
-            </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              I'm a Computer Science graduate building full-stack web apps, Python programs and thoughtful databases that make everyday experiences simpler.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild variant="hero" size="xl">
-                <Link to="/projects">View projects <ArrowRight /></Link>
-              </Button>
-              <Button asChild variant="pill" size="xl">
-                <a href={profile.github} target="_blank" rel="noreferrer"><Github /> GitHub</a>
-              </Button>
-            </div>
-          </div>
+    <section
+      id="home"
+      ref={containerRef}
+      className="relative min-h-[290svh] w-full bg-background"
+    >
+      {/* Sticky viewport container (Rogue Studio homeHeader equivalent) */}
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden rogue-hero-container flex flex-col justify-between p-4 sm:p-8">
+        {/* Three.js interactive 3D particle & wireframe canvas */}
+        <HeroScene scrollProgress={scrollProgress} />
 
-          <div className="relative flex min-h-56 items-center justify-center lg:min-h-full">
-            <div className="absolute inset-2 rounded-[1.4rem] bg-lilac/60 sm:inset-8" aria-hidden="true" />
-            <article key={activeCard} aria-live="polite" className="relative w-full max-w-md animate-rise rounded-3xl border border-border bg-card p-6 shadow-float sm:p-9">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase text-muted-foreground">About · {active.tag}</span>
-                <span className="grid size-12 place-items-center rounded-2xl bg-accent text-accent-foreground"><ActiveIcon className="size-6" /></span>
+        {/* Ambient background glow dots */}
+        <div className="absolute inset-0 grid-dots opacity-20 pointer-events-none" aria-hidden />
+
+        {/* Top Header Information Row (like Rogue Studio top bar) */}
+        <div className="relative z-20 flex items-center justify-between pt-16 sm:pt-14 px-2 sm:px-6">
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 backdrop-blur-md px-3.5 py-1.5 text-xs font-semibold tracking-wide uppercase text-muted-foreground">
+            <span className="size-2 rounded-full bg-accent animate-pulse" />
+            Software & Full-Stack Developer
+          </span>
+          <span className="hidden sm:inline-flex items-center gap-2 text-xs font-mono tracking-widest text-zinc-400 uppercase">
+            <span>Pakistan</span>
+            <span className="text-zinc-600">/</span>
+            <span>BSCS '26</span>
+          </span>
+        </div>
+
+        {/* ============================================================== */}
+        {/* CENTER MONUMENTAL BACKGROUND NAME (Replicating Rogue Studio H1) */}
+        {/* ============================================================== */}
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none px-4 select-none"
+          style={{
+            transform: `scale(${1 - scrollProgress * 0.1}) translateY(${scrollProgress * 60}px)`,
+            opacity: Math.max(0.12, 1 - scrollProgress * 0.95),
+            transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+          }}
+        >
+          <div className="text-center">
+            <p className="text-xs sm:text-sm font-mono tracking-[0.35em] text-accent/80 uppercase mb-3">
+              Computer Science &middot; Full-Stack &middot; Python &middot; Databases
+            </p>
+            <h1 className="rogue-bg-name-solid text-[clamp(4.8rem,16vw,14rem)] leading-[0.84] tracking-tighter">
+              MAIDA<span className="text-accent italic font-serif text-[0.85em]">*</span>
+            </h1>
+            <h1 className="rogue-bg-name text-[clamp(3.8rem,13vw,11.5rem)] leading-[0.84] tracking-tighter mt-1 opacity-70">
+              JAVED
+            </h1>
+            <p className="mt-5 max-w-xl mx-auto text-sm sm:text-base font-sans text-muted-foreground/90 leading-relaxed font-medium">
+              Computer Science graduate building full-stack web applications, Python automation tools,
+              and normalized databases with clean code and disciplined Git workflows.
+            </p>
+          </div>
+        </div>
+
+        {/* ============================================================== */}
+        {/* FLOATING SCATTERED CARDS (Rogue Studio homeHeader__imageWrap) */}
+        {/* ============================================================== */}
+        <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+          {cards.map((card) => {
+            const CardIcon = card.Icon;
+            const xOffset = card.palX * scrollProgress * 110;
+            const yOffset = card.palY * scrollProgress * 160;
+
+            return (
+              <div
+                key={card.id}
+                className={`absolute ${card.pos} pointer-events-auto w-[280px] sm:w-[320px] transition-transform duration-75`}
+                style={{
+                  transform: `translate3d(${xOffset}px, ${yOffset}px, 0) rotate(${card.rotate + scrollProgress * 4}deg)`,
+                }}
+              >
+                <article className="rogue-card rounded-2xl p-4 sm:p-5 group cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground font-semibold">
+                      {card.tag}
+                    </span>
+                    <span className={`grid size-9 place-items-center rounded-xl ${card.iconBg}`}>
+                      <CardIcon className="size-4" />
+                    </span>
+                  </div>
+                  <h3 className="mt-3 font-display-tight text-xl sm:text-2xl text-foreground group-hover:text-accent transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    {card.detail}
+                  </p>
+                  <div className="mt-3 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                    <span>{card.extra}</span>
+                    <span className="text-accent opacity-0 group-hover:opacity-100 transition-opacity">
+                      &rarr;
+                    </span>
+                  </div>
+                </article>
               </div>
-              <h2 className="mt-8 font-display-tight text-4xl sm:text-5xl">{active.title}</h2>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">{active.detail}</p>
-              <div className="mt-8 flex gap-2" aria-label={`Card ${activeCard + 1} of ${aboutCards.length}`}>
-                {aboutCards.map((card, index) => (
-                  <span key={card.tag} className={`h-1.5 flex-1 rounded-full ${index === activeCard ? "bg-primary" : "bg-border"}`} />
-                ))}
+            );
+          })}
+        </div>
+
+        {/* ============================================================== */}
+        {/* FLOATING FADED CODE BRACKETS & IF-ELSE BLOCKS                   */}
+        {/* ============================================================== */}
+        <div className="absolute inset-0 pointer-events-none z-15 overflow-hidden">
+          {codeSnippets.map((chip, idx) => {
+            const xOffset = chip.palX * scrollProgress * 130;
+            const yOffset = chip.palY * scrollProgress * 190;
+            const opacity = Math.max(0.15, Math.min(0.85, 0.45 + Math.sin(idx + scrollProgress * 4) * 0.35));
+
+            return (
+              <div
+                key={idx}
+                className={`absolute ${chip.pos} floating-code-chip px-3 py-1.5 rounded-lg text-[11px] sm:text-xs transition-transform duration-75`}
+                style={{
+                  transform: `translate3d(${xOffset}px, ${yOffset}px, 0)`,
+                  opacity,
+                }}
+              >
+                <span className={chip.color}>{chip.code}</span>
               </div>
-            </article>
+            );
+          })}
+        </div>
+
+        {/* ============================================================== */}
+        {/* BOTTOM METADATA BAR (Matching Rogue Studio footer notes)        */}
+        {/* ============================================================== */}
+        <div className="relative z-20 flex items-end justify-between pb-4 sm:pb-6 px-2 sm:px-6 text-xs text-muted-foreground font-mono">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500">Focus Area</span>
+            <span className="text-zinc-300 font-medium">Full-Stack Web &amp; Python Programming</span>
+          </div>
+          <div className="flex items-center gap-2 text-accent">
+            <span className="size-1.5 rounded-full bg-accent animate-ping" />
+            <span className="text-[11px] font-mono tracking-wider uppercase">Scroll to dive in</span>
+          </div>
+          <div className="hidden sm:flex flex-col text-right gap-0.5">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500">Degree</span>
+            <span className="text-zinc-300 font-medium">BS Computer Science &middot; VU</span>
           </div>
         </div>
       </div>
@@ -223,129 +442,6 @@ function Manifesto() {
   );
 }
 
-function Workspace() {
-  const langCounts = { Python: repos.filter((r) => r.language === "Python").length, HTML: repos.filter((r) => r.language === "HTML").length };
-  const short = ["Backend", "Frontend", "Data", "Network", "Tools"];
-  const bars = skillGroups.map((g, i) => ({ label: short[i], value: g.items.length }));
-  const maxBar = Math.max(...bars.map((b) => b.value));
-  return (
-    <section id="workspace" className="mt-16 px-3 sm:px-5">
-      <div className="mx-auto max-w-7xl rounded-[2rem] bg-secondary p-4 sm:p-6">
-        <div className="flex flex-col justify-between gap-6 px-2 pt-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-sm text-muted-foreground">My developer space</p>
-            <h2 className="font-display-tight text-5xl sm:text-6xl">
-              Welcome to
-              <br />
-              my workspace
-            </h2>
-          </div>
-          <div className="flex gap-8">
-            <div>
-              <p className="text-xs text-muted-foreground">Public repositories</p>
-              <p className="font-display text-4xl font-extrabold">{profile.stats.repos}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">GitHub followers</p>
-              <p className="font-display text-4xl font-extrabold">{profile.stats.followers}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Languages spoken</p>
-              <p className="font-display text-4xl font-extrabold">{profile.stats.languages}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_1fr]">
-          {/* recent repos table */}
-          <div className="rounded-3xl bg-card p-5 sm:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-bold">Recent repositories</p>
-                <p className="text-xs text-muted-foreground">Latest work published on GitHub</p>
-              </div>
-              <Link to="/projects" className="text-xs font-semibold text-primary hover:underline">
-                See all
-              </Link>
-            </div>
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[480px] text-sm">
-                <thead>
-                  <tr className="text-left text-xs text-muted-foreground">
-                    <th className="pb-3 font-medium">Project</th>
-                    <th className="pb-3 font-medium">Language</th>
-                    <th className="pb-3 text-right font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {repos.map((r) => (
-                    <tr key={r.name} className="border-t border-border">
-                      <td className="py-3 pr-3">
-                        <a href={repoUrl(r.name)} target="_blank" rel="noreferrer" className="font-semibold hover:text-primary">
-                          {r.title}
-                        </a>
-                      </td>
-                      <td className="py-3 text-muted-foreground">{r.language}</td>
-                      <td className="py-3 text-right">
-                        {r.preview ? (
-                          <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-accent-foreground">
-                            Live preview
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-lilac px-2.5 py-1 text-xs font-semibold text-lilac-foreground">
-                            Source code
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="grid gap-4">
-            <div className="rounded-3xl bg-card p-5 sm:p-6">
-              <p className="font-bold">Toolkit by area</p>
-              <p className="text-xs text-muted-foreground">Number of technologies in each skill area</p>
-              <div className="mt-5 flex h-40 items-end justify-between gap-2">
-                {bars.map((b, i) => (
-                  <div key={b.label} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
-                    <div
-                      className={`w-full rounded-full ${i % 3 === 0 ? "bg-primary" : i % 3 === 1 ? "bg-accent" : "bg-lilac"}`}
-                      style={{ height: `${(b.value / maxBar) * 100}%` }}
-                    />
-                    <span className="text-[11px] text-muted-foreground">{b.label} · {b.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-3xl bg-ink p-5 text-ink-foreground sm:p-6">
-              <div className="flex items-center justify-between">
-                <p className="font-bold">GitHub repo mix</p>
-                <a href={profile.github} target="_blank" rel="noreferrer" className="grid size-8 place-items-center rounded-full bg-ink-foreground/10">
-                  <ArrowUpRight className="size-4" />
-                </a>
-              </div>
-              <p className="mt-3 font-display text-4xl font-extrabold">
-                {langCounts.Python + langCounts.HTML} <span className="text-base font-medium text-ink-muted">project repos</span>
-              </p>
-              <div className="mt-4 flex h-3 overflow-hidden rounded-full">
-                <div className="bg-primary-glow" style={{ flex: langCounts.Python }} />
-                <div className="bg-accent" style={{ flex: langCounts.HTML }} />
-              </div>
-              <div className="mt-3 flex gap-5 text-xs text-ink-muted">
-                <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-full bg-primary-glow" /> Python · {langCounts.Python}</span>
-                <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-full bg-accent" /> HTML previews · {langCounts.HTML}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Featured() {
   return (
     <section id="projects" className="mt-16 px-3 sm:px-5">
@@ -368,21 +464,8 @@ function Featured() {
                 className={`group relative overflow-hidden rounded-[2rem] p-7 sm:p-10 ${lime ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground"}`}
               >
                 <div className="flex items-start justify-between">
-                  <span className={`featured-project-icon grid size-14 place-items-center rounded-2xl ${lime ? "bg-ink text-ink-foreground" : "bg-primary-foreground/15"}`} aria-hidden="true">
-                    {lime ? (
-                      <span className="food-setting">
-                        <span className="food-plate"><span className="food-plate-center" /></span>
-                        <span className="food-utensil food-fork" />
-                        <span className="food-utensil food-knife" />
-                      </span>
-                    ) : (
-                      <span className="book-icon">
-                        <BookOpen className="size-6" />
-                        <span className="book-page-turn book-page-one" />
-                        <span className="book-page-turn book-page-two" />
-                        <span className="book-page-turn book-page-three" />
-                      </span>
-                    )}
+                  <span className={`featured-project-icon grid size-14 place-items-center rounded-2xl ${lime ? "bg-ink text-ink-foreground" : "bg-primary-foreground/15 text-primary-foreground"}`} aria-hidden="true">
+                    {lime ? <FoodWasteCartIcon /> : <BookRiffleIcon />}
                   </span>
                   <span className={`rounded-full px-3 py-1 text-xs font-semibold ${lime ? "bg-ink/10" : "bg-primary-foreground/15"}`}>
                     {p.kind}
