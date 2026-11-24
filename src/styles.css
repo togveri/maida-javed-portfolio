@@ -366,22 +366,22 @@
   min-width: 0;
 }
 
-.screen-side > div {
+.screen-side>div {
   overflow-x: hidden !important;
   scrollbar-width: thin;
   scrollbar-color: rgba(187, 244, 56, 0.2) transparent;
 }
 
-.screen-side > div::-webkit-scrollbar {
+.screen-side>div::-webkit-scrollbar {
   width: 4px;
   height: 0px;
 }
 
-.screen-side > div::-webkit-scrollbar-track {
+.screen-side>div::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.screen-side > div::-webkit-scrollbar-thumb {
+.screen-side>div::-webkit-scrollbar-thumb {
   background: rgba(187, 244, 56, 0.2);
   border-radius: 4px;
 }
