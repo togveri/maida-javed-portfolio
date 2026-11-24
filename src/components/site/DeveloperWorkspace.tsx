@@ -286,15 +286,15 @@ export function DeveloperWorkspace() {
                 {/* Left Screen Column: Sidebar with Repositories List */}
                 <div className="screen-side">
                   <h6>RECENT REPOS</h6>
-                  <div className="flex flex-col gap-1 overflow-y-auto pr-1">
+                  <div className="flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1">
                     {repos.map((r, i) => (
                       <div
                         key={r.name}
                         onClick={() => scrollToRepo(i)}
                         className={`screen-item ${i === activeIndex ? "on" : ""}`}
                       >
-                        <span className="truncate">{r.title}</span>
-                        <i className="font-mono text-[10px] not-italic opacity-80">0{i + 1}</i>
+                        <span className="truncate min-w-0 flex-1">{r.title}</span>
+                        <i className="font-mono text-[10px] not-italic opacity-80 shrink-0">0{i + 1}</i>
                       </div>
                     ))}
                   </div>
@@ -372,7 +372,7 @@ export function DeveloperWorkspace() {
           </div>
 
           {/* ========================================================================= */}
-          {/* SVG DESK SETUP: Matte Executive Desk + Seated Developer + High-End PC Tower */}
+          {/* SVG DESK SETUP: Matte Executive Desk + Seated Developer */}
           {/* ========================================================================= */}
           <div className="desk-scene w-full max-w-[1080px] h-[26vh] min-h-[170px] pointer-events-none relative z-20">
             <svg
@@ -382,21 +382,10 @@ export function DeveloperWorkspace() {
               aria-hidden="true"
             >
               <defs>
-                {/* RGB Fan Glow Filter */}
-                <filter id="rgb-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
                 {/* Desk Surface Gradient */}
                 <linearGradient id="desk-mat" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#1e273d" />
                   <stop offset="100%" stopColor="#101524" />
-                </linearGradient>
-                {/* Tempered Glass Tint */}
-                <linearGradient id="glass-tint" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#17223b" stopOpacity="0.85" />
-                  <stop offset="50%" stopColor="#0d1424" stopOpacity="0.7" />
-                  <stop offset="100%" stopColor="#131e33" stopOpacity="0.85" />
                 </linearGradient>
               </defs>
 
@@ -444,56 +433,6 @@ export function DeveloperWorkspace() {
                 <path d="M 399 95 Q 399 66 420 66 Q 441 66 441 95" fill="none" stroke="#0a0d17" strokeWidth="3.5" />
                 <rect x="393" y="90" width="8" height="18" rx="3.5" fill="#bbf438" />
                 <rect x="439" y="90" width="8" height="18" rx="3.5" fill="#bbf438" />
-              </g>
-
-              {/* 3. HIGH-END LIAN-LI STYLE PC GAMING/WORKSTATION TOWER (Right Side of Desk) */}
-              <g className="pc-tower" transform="translate(670, 48)">
-                {/* Main Case Chassis (Obsidian Aluminum) */}
-                <rect x="0" y="0" width="115" height="100" rx="5" fill="#080c14" stroke="#253554" strokeWidth="1.8" />
-                {/* Top Fan Mesh / Radiator Ventilation */}
-                <rect x="10" y="4" width="95" height="6" rx="2" fill="#0f1624" stroke="#1d283f" />
-
-                {/* Front Tempered Glass Window */}
-                <rect x="6" y="14" width="76" height="80" rx="3" fill="url(#glass-tint)" stroke="#38bdf8" strokeWidth="1" strokeOpacity="0.4" />
-
-                {/* Interior ARGB Liquid Cooling Radiator & Tubes */}
-                <path d="M 28 32 C 34 40, 44 40, 50 48" fill="none" stroke="#3b82f6" strokeWidth="2.5" />
-                <path d="M 34 32 C 40 42, 50 42, 56 48" fill="none" stroke="#bbf438" strokeWidth="2" />
-                {/* Motherboard RAM modules (Dual Channel RGB LED sticks) */}
-                <rect x="46" y="24" width="3" height="16" rx="1" fill="#bbf438" className="desk-led-glow" />
-                <rect x="52" y="24" width="3" height="16" rx="1" fill="#3b82f6" className="desk-led-glow" />
-
-                {/* GPU Graphics Card with illuminated side accent */}
-                <rect x="14" y="58" width="60" height="14" rx="2" fill="#0e1422" stroke="#6c4cff" strokeWidth="1.2" />
-                <line x1="18" y1="65" x2="68" y2="65" stroke="#bbf438" strokeWidth="1.8" className="desk-led-glow" />
-
-                {/* Dual Front Spinning ARGB Intake Fans */}
-                {/* Fan 1 (Top) */}
-                <g transform="translate(97, 36)">
-                  <circle r="12" fill="#090d17" stroke="#bbf438" strokeWidth="1.5" />
-                  <circle r="4" fill="#bbf438" />
-                  <g className="pc-fan-spin">
-                    <circle r="10" fill="none" stroke="#bbf438" strokeDasharray="3 2" />
-                    <line x1="0" y1="-10" x2="0" y2="10" stroke="#bbf438" strokeWidth="1.2" />
-                    <line x1="-10" y1="0" x2="10" y2="0" stroke="#bbf438" strokeWidth="1.2" />
-                  </g>
-                </g>
-
-                {/* Fan 2 (Bottom) */}
-                <g transform="translate(97, 72)">
-                  <circle r="12" fill="#090d17" stroke="#3b82f6" strokeWidth="1.5" />
-                  <circle r="4" fill="#3b82f6" />
-                  <g className="pc-fan-spin">
-                    <circle r="10" fill="none" stroke="#3b82f6" strokeDasharray="3 2" />
-                    <line x1="0" y1="-10" x2="0" y2="10" stroke="#3b82f6" strokeWidth="1.2" />
-                    <line x1="-10" y1="0" x2="10" y2="0" stroke="#3b82f6" strokeWidth="1.2" />
-                  </g>
-                </g>
-
-                {/* Power Button & I/O Ports on Front Top Edge */}
-                <circle cx="97" cy="10" r="2.5" fill="#bbf438" className="desk-led-glow" />
-                <rect x="88" y="9" width="3" height="2" fill="#3b82f6" />
-                <rect x="82" y="9" width="3" height="2" fill="#3b82f6" />
               </g>
             </svg>
           </div>

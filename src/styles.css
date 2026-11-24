@@ -362,6 +362,28 @@
   gap: 0.5cqw;
   background: rgba(8, 12, 22, 0.6);
   z-index: 2;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.screen-side > div {
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(187, 244, 56, 0.2) transparent;
+}
+
+.screen-side > div::-webkit-scrollbar {
+  width: 4px;
+  height: 0px;
+}
+
+.screen-side > div::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.screen-side > div::-webkit-scrollbar-thumb {
+  background: rgba(187, 244, 56, 0.2);
+  border-radius: 4px;
 }
 
 .screen-side h6 {
@@ -610,17 +632,6 @@
   transition: height 0.12s ease-out;
 }
 
-/* PC Fan Spin Animation */
-.pc-fan-spin {
-  transform-origin: center;
-  animation: pc-fan-rotate 1.2s linear infinite;
-}
-
-@keyframes pc-fan-rotate {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 .desk-led-glow {
   animation: led-breathe 3s ease-in-out infinite;
