@@ -186,7 +186,7 @@ export function DeveloperWorkspace() {
       id="workspace"
       ref={sectionRef}
       className="relative w-full"
-      style={{ height: `calc(100vh + ${N * 75}vh)` }}
+      style={{ height: `calc(100vh + ${N * 42}vh)` }}
     >
       {/* Sticky Stage Viewport */}
       <div
@@ -199,242 +199,278 @@ export function DeveloperWorkspace() {
         {/* Particle Canvas Background */}
         <canvas ref={canvasRef} className="absolute inset-0 size-full pointer-events-none z-0" />
 
-        {/* Ambient Top Eyebrow */}
-        <div className="absolute top-[3vh] left-[4vw] sm:left-[5vw] z-10 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-accent font-semibold">
-          <span className="size-2 rounded-full bg-accent animate-ping" />
-          My developer space
-        </div>
+        {/* Soft Blend Transitions into neighboring sections */}
+        <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-background to-transparent pointer-events-none z-10" />
+        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
 
-        {/* Massive Monumental Ghost Typography */}
-        <div className="absolute left-1/2 top-[4%] -translate-x-1/2 font-display text-[clamp(60px,16vw,220px)] font-black text-white/[0.04] whitespace-nowrap tracking-tighter select-none pointer-events-none z-0">
-          WORKSPACE
-        </div>
+        {/* Stage Content Container Aligned with max-w-7xl */}
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-3 sm:px-6 h-full flex flex-col justify-between pointer-events-none">
+          {/* Ambient Top Eyebrow Row */}
+          <div className="pt-[3vh] flex items-center justify-between pointer-events-auto">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-accent font-semibold">
+              <span className="size-2 rounded-full bg-accent animate-ping" />
+              My developer space
+            </div>
+            <a
+              href="#projects"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] text-zinc-400 hover:text-accent transition-colors tracking-widest uppercase"
+            >
+              <span>Skip to builds</span>
+              <span className="text-accent">&darr;</span>
+            </a>
+          </div>
 
-        {/* Ambient Floating Code Chips */}
-        <div className="chip hidden md:block" style={{ left: "20vw", top: "7vh" }}>
-          git push origin main
-        </div>
-        <div className="chip hidden md:block" style={{ right: "18vw", top: "8vh", animationDelay: "-2s" }}>
-          &#123; ...repos.map(ship) &#125;
-        </div>
-        <div className="chip hidden md:block" style={{ left: "6vw", top: "72vh", animationDelay: "-4s" }}>
-          &lt;Portfolio.Live /&gt;
-        </div>
-        <div className="chip hidden md:block" style={{ right: "6vw", top: "70vh", animationDelay: "-1s" }}>
-          npm run build
-        </div>
+          {/* Massive Monumental Ghost Typography */}
+          <div className="absolute left-1/2 top-[4%] -translate-x-1/2 font-display text-[clamp(60px,16vw,220px)] font-black text-white/[0.04] whitespace-nowrap tracking-tighter select-none pointer-events-none z-0">
+            WORKSPACE
+          </div>
 
-        {/* Left Floating Card: TOOLKIT BY AREA */}
-        <div className="ws-card ws-card-left hidden lg:block" id="cl">
-          <h5 className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-3">
-            Toolkit by Area
-          </h5>
-          <div className="space-y-2">
-            {toolkit.map((item) => (
-              <div key={item.name} className="grid grid-cols-[68px_1fr_18px] items-center gap-2 font-mono text-[11px]">
-                <span className="text-muted-foreground">{item.name}</span>
-                <div className="h-1.5 w-full bg-[#162038] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-accent rounded-full transition-all duration-1000"
-                    style={{ width: `${(item.count / maxToolCount) * 100}%` }}
-                  />
+          {/* Ambient Floating Code Chips */}
+          <div className="chip hidden md:block" style={{ left: "12%", top: "8vh" }}>
+            git push origin main
+          </div>
+          <div className="chip hidden md:block" style={{ right: "10%", top: "9vh", animationDelay: "-2s" }}>
+            &#123; ...repos.map(ship) &#125;
+          </div>
+          <div className="chip hidden md:block" style={{ left: "3%", top: "72vh", animationDelay: "-4s" }}>
+            &lt;Portfolio.Live /&gt;
+          </div>
+          <div className="chip hidden md:block" style={{ right: "3%", top: "70vh", animationDelay: "-1s" }}>
+            npm run build
+          </div>
+
+          {/* Left Floating Card: TOOLKIT BY AREA */}
+          <div className="ws-card ws-card-left hidden lg:block pointer-events-auto" id="cl">
+            <h5 className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+              Toolkit by Area
+            </h5>
+            <div className="space-y-2">
+              {toolkit.map((item) => (
+                <div key={item.name} className="grid grid-cols-[68px_1fr_18px] items-center gap-2 font-mono text-[11px]">
+                  <span className="text-muted-foreground">{item.name}</span>
+                  <div className="h-1.5 w-full bg-[#162038] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full transition-all duration-1000"
+                      style={{ width: `${(item.count / maxToolCount) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-right text-foreground font-semibold">{item.count}</span>
                 </div>
-                <span className="text-right text-foreground font-semibold">{item.count}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Floating Card: GITHUB STATS */}
+          <div className="ws-card ws-card-right hidden lg:block pointer-events-auto" id="cr">
+            <h5 className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-3">
+              GitHub Metrics
+            </h5>
+            <div className="space-y-2 font-mono text-xs">
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-2xl font-black text-foreground min-w-[34px]">
+                  {profile.stats.repos}
+                </span>
+                <span className="text-muted-foreground">public repos</span>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right Floating Card: GITHUB STATS */}
-        <div className="ws-card ws-card-right hidden lg:block" id="cr">
-          <h5 className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-accent mb-3">
-            GitHub Metrics
-          </h5>
-          <div className="space-y-2 font-mono text-xs">
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-2xl font-black text-foreground min-w-[34px]">
-                {profile.stats.repos}
-              </span>
-              <span className="text-muted-foreground">public repos</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-2xl font-black text-foreground min-w-[34px]">
-                {profile.stats.followers}
-              </span>
-              <span className="text-muted-foreground">followers</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-2xl font-black text-foreground min-w-[34px]">
-                {profile.stats.languages}
-              </span>
-              <span className="text-muted-foreground">languages spoken</span>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-2xl font-black text-foreground min-w-[34px]">
+                  {profile.stats.followers}
+                </span>
+                <span className="text-muted-foreground">followers</span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-2xl font-black text-foreground min-w-[34px]">
+                  {profile.stats.languages}
+                </span>
+                <span className="text-muted-foreground">languages spoken</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* ========================================================================= */}
-        {/* BATTLESTATION STAGE: Ultrawide Monitor + Desk + Seated Developer + PC Tower */}
-        {/* ========================================================================= */}
-        <div className="relative z-10 flex-1 flex flex-col justify-end items-center pb-[2vh]">
-          {/* Ultrawide Curved Monitor Component */}
-          <div className="mon-wrap">
-            <div className="mon">
-              <div className="screen">
-                {/* CRT Screen Sweep Beam */}
-                <div className="beam" />
+          {/* ========================================================================= */}
+          {/* BATTLESTATION STAGE: Ultrawide Monitor + Desk + Seated Developer */}
+          {/* ========================================================================= */}
+          <div className="relative z-10 flex-1 flex flex-col justify-end items-center pb-[2vh] pointer-events-auto">
+            {/* Ultrawide Curved Monitor Component */}
+            <div className="mon-wrap">
+              <div className="mon">
+                <div className="screen">
+                  {/* CRT Screen Sweep Beam */}
+                  <div className="beam" />
 
-                {/* Left Screen Column: Sidebar with Repositories List */}
-                <div className="screen-side">
-                  <h6>RECENT REPOS</h6>
-                  <div className="flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1">
-                    {repos.map((r, i) => (
-                      <div
-                        key={r.name}
-                        onClick={() => scrollToRepo(i)}
-                        className={`screen-item ${i === activeIndex ? "on" : ""}`}
-                      >
-                        <span className="truncate min-w-0 flex-1">{r.title}</span>
-                        <i className="font-mono text-[10px] not-italic opacity-80 shrink-0">0{i + 1}</i>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right Screen Column: Active Repository IDE Card & Terminal */}
-                <div className="screen-main">
-                  <div className="flex items-center justify-between">
-                    <span className="screen-num">
-                      0{activeIndex + 1} / 0{N}
-                    </span>
-                    <span className="text-[11px] font-mono text-zinc-400">
-                      MaidaJaved23 / {activeRepo.name}
-                    </span>
+                  {/* Left Screen Column: Sidebar with Repositories List */}
+                  <div className="screen-side">
+                    <h6>RECENT REPOS</h6>
+                    <div className="flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1">
+                      {repos.map((r, i) => (
+                        <div
+                          key={r.name}
+                          onClick={() => scrollToRepo(i)}
+                          className={`screen-item ${i === activeIndex ? "on" : ""}`}
+                        >
+                          <span className="truncate min-w-0 flex-1">{r.title}</span>
+                          <i className="font-mono text-[10px] not-italic opacity-80 shrink-0">0{i + 1}</i>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <h2 className="screen-title">{activeRepo.title}</h2>
+                  {/* Right Screen Column: Active Repository IDE Card & Terminal */}
+                  <div className="screen-main">
+                    <div className="flex items-center justify-between">
+                      <span className="screen-num">
+                        0{activeIndex + 1} / 0{N}
+                      </span>
+                      <span className="text-[11px] font-mono text-zinc-400">
+                        MaidaJaved23 / {activeRepo.name}
+                      </span>
+                    </div>
 
-                  {/* Metadata Pills */}
-                  <div className="flex flex-wrap items-center gap-2 my-2">
-                    <span className="screen-pill">{activeRepo.language}</span>
-                    <span className={`screen-pill ${activeRepo.preview ? "screen-pill-accent" : ""}`}>
-                      {activeRepo.preview ? "Live preview" : "Source code"}
-                    </span>
-                    {activeRepo.stars ? (
-                      <span className="screen-pill">★ {activeRepo.stars}</span>
-                    ) : null}
-                  </div>
+                    <h2 className="screen-title">{activeRepo.title}</h2>
 
-                  {/* Description */}
-                  <p className="screen-desc">{activeRepo.summary}</p>
+                    {/* Metadata Pills */}
+                    <div className="flex flex-wrap items-center gap-2 my-2">
+                      <span className="screen-pill">{activeRepo.language}</span>
+                      <span className={`screen-pill ${activeRepo.preview ? "screen-pill-accent" : ""}`}>
+                        {activeRepo.preview ? "Live preview" : "Source code"}
+                      </span>
+                      {activeRepo.stars ? (
+                        <span className="screen-pill">★ {activeRepo.stars}</span>
+                      ) : null}
+                    </div>
 
-                  {/* Terminal Typing Simulation */}
-                  <div className="screen-term">
-                    {termText}
-                    <b className="terminal-cursor" />
-                  </div>
+                    {/* Description */}
+                    <p className="screen-desc">{activeRepo.summary}</p>
 
-                  {/* Direct Link Action Buttons */}
-                  <div className="mt-4 flex flex-wrap items-center gap-3">
-                    <a
-                      href={repoUrl(activeRepo.name)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="screen-cta"
-                    >
-                      <Github className="size-3.5 inline mr-1" />
-                      Open on GitHub ↗
-                    </a>
-                    {activeRepo.preview ? (
+                    {/* Terminal Typing Simulation */}
+                    <div className="screen-term">
+                      {termText}
+                      <b className="terminal-cursor" />
+                    </div>
+
+                    {/* Direct Link Action Buttons */}
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
                       <a
-                        href={activeRepo.preview}
+                        href={repoUrl(activeRepo.name)}
                         target="_blank"
                         rel="noreferrer"
-                        className="screen-cta-secondary"
+                        className="screen-cta"
                       >
-                        <ExternalLink className="size-3.5 inline mr-1" />
-                        Live Preview ↗
+                        <Github className="size-3.5 inline mr-1" />
+                        Open on GitHub ↗
                       </a>
-                    ) : null}
-                  </div>
+                      {activeRepo.preview ? (
+                        <a
+                          href={activeRepo.preview}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="screen-cta-secondary"
+                        >
+                          <ExternalLink className="size-3.5 inline mr-1" />
+                          Live Preview ↗
+                        </a>
+                      ) : null}
+                    </div>
 
-                  {/* Bottom Fill Bar */}
-                  <div
-                    className="screen-bar"
-                    style={{ width: `${((activeIndex + 1) / N) * 100}%` }}
-                  />
+                    {/* Bottom Fill Bar */}
+                    <div
+                      className="screen-bar"
+                      style={{ width: `${((activeIndex + 1) / N) * 100}%` }}
+                    />
+                  </div>
                 </div>
               </div>
+
+              {/* Aluminum Heavy-duty Monitor Neck & Stand Base resting flush on desk */}
+              <div className="mon-neck" />
+              <div className="mon-base" />
             </div>
 
-            {/* Aluminum Heavy-duty Monitor Neck & Stand Base resting flush on desk */}
-            <div className="mon-neck" />
-            <div className="mon-base" />
+            {/* ========================================================================= */}
+            {/* SVG DESK SETUP: Matte Executive Desk + Seated Developer */}
+            {/* ========================================================================= */}
+            <div className="desk-scene w-full max-w-[1080px] h-[26vh] min-h-[170px] pointer-events-none relative z-20">
+              <svg
+                viewBox="0 0 880 220"
+                preserveAspectRatio="xMidYMax meet"
+                className="size-full overflow-visible"
+                aria-hidden="true"
+              >
+                <defs>
+                  {/* Desk Surface Gradient */}
+                  <linearGradient id="desk-mat" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1e273d" />
+                    <stop offset="100%" stopColor="#101524" />
+                  </linearGradient>
+                </defs>
+
+                {/* 1. SOLID EXECUTIVE DESK SURFACE */}
+                {/* Desk Top Bevel */}
+                <rect x="60" y="148" width="760" height="12" rx="3" fill="url(#desk-mat)" stroke="#263452" strokeWidth="1" />
+                {/* Desk Ambient Underglow Strip (Acid Lime) */}
+                <rect x="62" y="158" width="756" height="3" fill="#bbf438" className="desk-led-glow" />
+                {/* Desk Heavy Steel Legs */}
+                <rect x="85" y="161" width="10" height="60" fill="#0c111c" />
+                <rect x="785" y="161" width="10" height="60" fill="#0c111c" />
+                {/* Cable Grommet / Organizer */}
+                <ellipse cx="440" cy="151" rx="8" ry="3" fill="#0c101a" stroke="#1d263b" />
+
+                {/* Ultra-wide Desk Mat under peripherals */}
+                <rect x="240" y="146" width="360" height="7" rx="2" fill="#0c101b" stroke="#3b82f6" strokeWidth="0.8" />
+                {/* Mechanical Keyboard with RGB Underglow */}
+                <rect x="330" y="142" width="140" height="9" rx="2.5" fill="#131929" stroke="#bbf438" strokeWidth="1" />
+                {/* Wireless Gaming Mouse */}
+                <rect x="495" y="144" width="14" height="7" rx="3.5" fill="#131929" stroke="#3b82f6" strokeWidth="1" />
+
+                {/* 2. DEVELOPER AVATAR SEATED AT WORKSPACE */}
+                <g className="developer-avatar">
+                  {/* Ergonomic Mesh Office Chair Backrest */}
+                  <path d="M 370 195 Q 365 125 392 118 L 448 118 Q 475 125 470 195 L 476 220 L 364 220 Z" fill="#202947" stroke="#2b375e" strokeWidth="1.2" />
+                  {/* Chair Headrest */}
+                  <rect x="400" y="88" width="40" height="18" rx="6" fill="#161e33" stroke="#2b375e" strokeWidth="1" />
+
+                  {/* Torso / Developer Hoodie */}
+                  <path d="M 376 150 Q 400 130 420 152 Q 440 130 464 150 L 452 210 L 388 210 Z" fill="#182038" />
+                  {/* Clean Code Badge on Hoodie */}
+                  <text x="420" y="176" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="#bbf438" fontWeight="bold">
+                    &lt;/&gt;
+                  </text>
+
+                  {/* Hands resting on Mechanical Keyboard */}
+                  <path d="M 376 150 L 362 165 L 392 147" fill="none" stroke="#273359" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M 464 150 L 478 165 L 448 147" fill="none" stroke="#273359" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
+                  <ellipse cx="392" cy="144" rx="7" ry="5" fill="#d9a07c" />
+                  <ellipse cx="502" cy="146" rx="6" ry="5" fill="#d9a07c" />
+
+                  {/* Developer Head & Hair */}
+                  <path d="M 400 94 Q 396 72 420 70 Q 444 72 440 94 Q 446 120 436 138 Q 420 144 404 138 Q 396 120 400 94 Z" fill="#171221" />
+                  {/* Developer Studio Headphones with Accent Lime Lights */}
+                  <path d="M 399 95 Q 399 66 420 66 Q 441 66 441 95" fill="none" stroke="#0a0d17" strokeWidth="3.5" />
+                  <rect x="393" y="90" width="8" height="18" rx="3.5" fill="#bbf438" />
+                  <rect x="439" y="90" width="8" height="18" rx="3.5" fill="#bbf438" />
+                </g>
+              </svg>
+            </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* SVG DESK SETUP: Matte Executive Desk + Seated Developer */}
-          {/* ========================================================================= */}
-          <div className="desk-scene w-full max-w-[1080px] h-[26vh] min-h-[170px] pointer-events-none relative z-20">
-            <svg
-              viewBox="0 0 880 220"
-              preserveAspectRatio="xMidYMax meet"
-              className="size-full overflow-visible"
-              aria-hidden="true"
+          {/* Bottom Interactive Navigation Hint */}
+          <div className="pb-[1.8vh] flex items-center justify-center font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-zinc-500 whitespace-nowrap pointer-events-auto gap-3">
+            <span>Scroll to explore projects &middot; click monitor to view code</span>
+            <span className="text-zinc-600 hidden sm:inline">&middot;</span>
+            <a
+              href="#projects"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="text-accent hover:underline hidden sm:inline-flex items-center gap-1 font-semibold"
             >
-              <defs>
-                {/* Desk Surface Gradient */}
-                <linearGradient id="desk-mat" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#1e273d" />
-                  <stop offset="100%" stopColor="#101524" />
-                </linearGradient>
-              </defs>
-
-              {/* 1. SOLID EXECUTIVE DESK SURFACE */}
-              {/* Desk Top Bevel */}
-              <rect x="60" y="148" width="760" height="12" rx="3" fill="url(#desk-mat)" stroke="#263452" strokeWidth="1" />
-              {/* Desk Ambient Underglow Strip (Acid Lime) */}
-              <rect x="62" y="158" width="756" height="3" fill="#bbf438" className="desk-led-glow" />
-              {/* Desk Heavy Steel Legs */}
-              <rect x="85" y="161" width="10" height="60" fill="#0c111c" />
-              <rect x="785" y="161" width="10" height="60" fill="#0c111c" />
-              {/* Cable Grommet / Organizer */}
-              <ellipse cx="440" cy="151" rx="8" ry="3" fill="#0c101a" stroke="#1d263b" />
-
-              {/* Ultra-wide Desk Mat under peripherals */}
-              <rect x="240" y="146" width="360" height="7" rx="2" fill="#0c101b" stroke="#3b82f6" strokeWidth="0.8" />
-              {/* Mechanical Keyboard with RGB Underglow */}
-              <rect x="330" y="142" width="140" height="9" rx="2.5" fill="#131929" stroke="#bbf438" strokeWidth="1" />
-              {/* Wireless Gaming Mouse */}
-              <rect x="495" y="144" width="14" height="7" rx="3.5" fill="#131929" stroke="#3b82f6" strokeWidth="1" />
-
-              {/* 2. DEVELOPER AVATAR SEATED AT WORKSPACE */}
-              <g className="developer-avatar">
-                {/* Ergonomic Mesh Office Chair Backrest */}
-                <path d="M 370 195 Q 365 125 392 118 L 448 118 Q 475 125 470 195 L 476 220 L 364 220 Z" fill="#202947" stroke="#2b375e" strokeWidth="1.2" />
-                {/* Chair Headrest */}
-                <rect x="400" y="88" width="40" height="18" rx="6" fill="#161e33" stroke="#2b375e" strokeWidth="1" />
-
-                {/* Torso / Developer Hoodie */}
-                <path d="M 376 150 Q 400 130 420 152 Q 440 130 464 150 L 452 210 L 388 210 Z" fill="#182038" />
-                {/* Clean Code Badge on Hoodie */}
-                <text x="420" y="176" textAnchor="middle" fontFamily="monospace" fontSize="9" fill="#bbf438" fontWeight="bold">
-                  &lt;/&gt;
-                </text>
-
-                {/* Hands resting on Mechanical Keyboard */}
-                <path d="M 376 150 L 362 165 L 392 147" fill="none" stroke="#273359" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M 464 150 L 478 165 L 448 147" fill="none" stroke="#273359" strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" />
-                <ellipse cx="392" cy="144" rx="7" ry="5" fill="#d9a07c" />
-                <ellipse cx="502" cy="146" rx="6" ry="5" fill="#d9a07c" />
-
-                {/* Developer Head & Hair */}
-                <path d="M 400 94 Q 396 72 420 70 Q 444 72 440 94 Q 446 120 436 138 Q 420 144 404 138 Q 396 120 400 94 Z" fill="#171221" />
-                {/* Developer Studio Headphones with Accent Lime Lights */}
-                <path d="M 399 95 Q 399 66 420 66 Q 441 66 441 95" fill="none" stroke="#0a0d17" strokeWidth="3.5" />
-                <rect x="393" y="90" width="8" height="18" rx="3.5" fill="#bbf438" />
-                <rect x="439" y="90" width="8" height="18" rx="3.5" fill="#bbf438" />
-              </g>
-            </svg>
+              Skip to builds &darr;
+            </a>
           </div>
         </div>
 
@@ -446,11 +482,6 @@ export function DeveloperWorkspace() {
             className="ws-rail-fill"
             style={{ height: `${scrollPercent}%` }}
           />
-        </div>
-
-        {/* Bottom Interactive Navigation Hint */}
-        <div className="absolute z-20 left-1/2 bottom-[1.8vh] -translate-x-1/2 font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-zinc-500 whitespace-nowrap">
-          Scroll to explore projects &middot; click monitor to view code
         </div>
       </div>
     </section>

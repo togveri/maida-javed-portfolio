@@ -577,16 +577,16 @@
 }
 
 .ws-card-left {
-  left: 3vw;
+  left: 0;
   top: 36vh;
-  width: 215px;
+  width: 220px;
   transform: translate(var(--tx-l, 0px), var(--ty-l, 0px)) rotate(-4deg);
 }
 
 .ws-card-right {
-  right: 3vw;
+  right: 0;
   top: 32vh;
-  width: 205px;
+  width: 210px;
   transform: translate(var(--tx-r, 0px), var(--ty-r, 0px)) rotate(3deg);
 }
 
@@ -608,10 +608,10 @@
   }
 }
 
-/* Right Rail Progress Bar */
+/* Right Rail Progress Bar: anchored alongside max-w-7xl boundary */
 .ws-rail {
   position: absolute;
-  right: 18px;
+  right: max(16px, calc((100vw - 1280px) / 2 + 16px));
   top: 18vh;
   bottom: 18vh;
   width: 3.5px;
